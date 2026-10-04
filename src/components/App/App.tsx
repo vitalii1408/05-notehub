@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
 import { fetchNotes } from '../../services/noteService';
 import NoteList from '../NoteList/NoteList';
 import Pagination from '../Pagination/Pagination';
+import SearchBox from '../SearchBox/SearchBox';
 import css from './App.module.css';
 
 export default function App() {
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
 
   const { data } = useQuery({
-    queryKey: ['notes', page],
-    queryFn: () => fetchNotes({ page }),
+    queryKey: ['notes', page, search],
+    queryFn: () => fetchNotes({ page, search }),
     placeholderData: keepPreviousData,
   });
+
+  const handleSearch = useDebouncedCallback((value: string) => {
+    setSearch(value);
+    setPage(1);
+  }, 500);
 
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 0;
@@ -20,7 +28,7 @@ export default function App() {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        {/* Компонент SearchBox */}
+        <SearchBox onChange={handleSearch} />
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}
