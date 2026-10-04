@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchNotes } from '../../services/noteService';
+import NoteForm from '../NoteForm/NoteForm';
 import NoteList from '../NoteList/NoteList';
 import Modal from '../Modal/Modal';
 import Pagination from '../Pagination/Pagination';
@@ -48,7 +49,7 @@ export default function App() {
       {notes.length > 0 && <NoteList notes={notes} />}
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <p>NoteForm</p>
+          <NoteForm onClose={closeModal} />
         </Modal>
       )}
     </div>
